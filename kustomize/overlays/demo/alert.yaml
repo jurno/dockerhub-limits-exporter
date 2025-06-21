@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: dockerhub-limits-exporter-rules
+  labels:
+    release: prometheus
+spec:
+  groups:
+    - name: dockerhub-rate-limit.rules
+      rules:
+        - alert: DockerHubPullsLow
+          expr: dockerhub_rate_limit_remaining < 20
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Docker Hub pull limit is low"
+            description: "Remaining Docker Hub pulls are below 20 (value: {{ $value }}). Consider rate limit exhaustion or switch to authenticated access."

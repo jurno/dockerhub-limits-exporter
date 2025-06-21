@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dockerhub-limits-exporter
+  labels:
+    app.kubernetes.io/name: dockerhub-limits-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dockerhub-limits-exporter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: dockerhub-limits-exporter
+        app.kubernetes.io/instance: dockerhub-limits-exporter
+        app.kubernetes.io/component: exporter
+        app.kubernetes.io/part-of: dockerhub-limits-exporter
+        app.kubernetes.io/managed-by: kustomize
+    spec:
+      containers:
+        - name: exporter
+          image: ghcr.io/jurno/dockerhub-limits-exporter:latest
+          imagePullPolicy: Always
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            # FIXME # SEC
+            # runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            - name: DOCKER_REPO
+              value: "library/alpine"
+            - name: DOCKER_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: dockerhub-credentials
+                  key: DOCKER_USERNAME
+                  optional: true
+            - name: DOCKER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dockerhub-credentials
+                  key: DOCKER_PASSWORD
+                  optional: true
+          resources:
+            limits:
+              cpu: 100m
+              memory: 64Mi
+            requests:
+              cpu: 50m
+              memory: 32Mi
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: http
