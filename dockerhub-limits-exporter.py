@@ -47,7 +47,7 @@ def get_token():
 def fetch_dockerhub_rate_limit():
     token = get_token()
     if not token:
-        return 0, 0, 0
+        return 0, 0
 
     headers = {
         "Accept": "application/vnd.docker.distribution.manifest.v2+json",
