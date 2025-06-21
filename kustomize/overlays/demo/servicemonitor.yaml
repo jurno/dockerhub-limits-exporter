@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: dockerhub-limits-exporter
+  labels:
+    app.kubernetes.io/name: dockerhub-limits-exporter
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dockerhub-limits-exporter
+  endpoints:
+    - port: http
+      interval: 60s
+      path: /metrics

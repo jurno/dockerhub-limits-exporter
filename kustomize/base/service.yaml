@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dockerhub-limits-exporter
+  labels:
+    app.kubernetes.io/name: dockerhub-limits-exporter
+spec:
+  selector:
+    app.kubernetes.io/name: dockerhub-limits-exporter
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      protocol: TCP

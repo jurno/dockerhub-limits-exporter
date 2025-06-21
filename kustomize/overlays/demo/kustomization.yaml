@@ -1,0 +1,11 @@
+resources:
+  - ../../base
+  - servicemonitor.yaml
+  - alert.yaml
+
+nameSuffix: -demo
+namespace: demo
+
+images:
+  - name: ghcr.io/jurno/dockerhub-limits-exporter
+    newTag: 0.1.0
